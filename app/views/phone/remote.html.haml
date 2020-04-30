@@ -1,13 +1,37 @@
 :coffeescript
   aws_wss = "ws://162.243.120.86:443"
   window.socket = undefined;
-  
   $ ->
-    alertify.notify "Hello World"
+    alertify.notify "Hello World!"
+    
+    color_id = ""
+    remote_id = ""
+    
     $("form").submit (event)->
       event.preventDefault()
-    # YOUR CODE HERE
+    $("#connect").click (event)->
+      alertify.notify "Connecting to socket"
+      $("#connect").addClass(["green", "disabled"])
+      window.socket = true
+    $("#directional-pad .button:not(.dummy)").click (event)->
+      data = new FormData($("form")[0])
+      color_id = data.get("color_id")
+      remote_id = data.get("remote_id")
     
+      req =
+        "action": "move"
+        "direction": event.currentTarget.getAttribute("name")
+        "color_id": color_id
+      
+      if !window.socket
+        alertify.error "Socket does not exist. Connect first"
+        return
+      else if !remote_id
+        alertify.error "Please specify a remote ID"
+        return
+      else
+        console.log "Server << ", JSON.stringify(req)
+      
 / DO NOT MODIFY CODE BELOW THIS LINE
 .mobile
   .hero
